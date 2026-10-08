@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ابزارک | فروشگاه ابزارآلات</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial;background:#f3f4f6;color:#222}
+header{background:#20252c;color:white;padding:20px 14px}
+header h1{margin:0;color:#ffb000}
+header p{margin-bottom:0}
+nav{background:#ffb000;padding:12px;text-align:center;font-weight:bold}
+main{padding:16px;max-width:950px;margin:auto}
+input{width:100%;padding:13px;border:1px solid #ddd;border-radius:8px;font-size:15px}
+.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.card{background:white;border-radius:12px;padding:12px;box-shadow:0 2px 8px #0000000d}
+.pic{font-size:48px;text-align:center;background:#f7f7f7;padding:15px;border-radius:8px}
+.card h3{font-size:15px}
+.price{color:#d35400;font-weight:bold}
+button{border:0;border-radius:7px;padding:10px;background:#ffb000;font-weight:bold;cursor:pointer;margin-top:5px}
+button.secondary{background:#303640;color:white}
+section{background:white;border-radius:12px;padding:15px;margin-top:18px}
+footer{text-align:center;background:#20252c;color:white;padding:22px;margin-top:25px}
+@media(min-width:650px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header>
+<h1>🔧 ابزارک</h1>
+<p>ابزارهای کاربردی برای حرفه‌ای‌ها</p>
+</header>
+<nav>خانه | محصولات | درباره ما</nav>
+<main>
+<h2>محصولات فروشگاه</h2>
+<input id="search" placeholder="نام محصول را جست‌وجو کن..." oninput="render()">
+<div class="products" id="products"></div>
+<section id="details" hidden></section>
+<section>
+<h2>🛒 سبد خرید: <span id="count">۰</span></h2>
+<div id="cart">سبد خرید خالی است.</div>
+<p>مجموع: <strong id="total">۰</strong> تومان</p>
+<button onclick="clearCart()" class="secondary">خالی کردن سبد</button>
+<p style="font-size:12px">این فروشگاه نمایشی است و پرداخت واقعی ندارد.</p>
+</section>
+</main>
+<footer>
+<strong>ابزارک</strong>
+<p>نمونه‌کار طراحی فروشگاه اینترنتی</p>
+<p>تماس: 09120000000</p>
+<p>اینستاگرام: @abzarak_demo</p>
+</footer>
+<script>
+const items=[
+{id:1,name:"دریل برقی",price:1850000,emoji:"🔩",desc:"دریل مناسب کارهای خانگی و کارگاهی."},
+{id:2,name:"جعبه ابزار",price:920000,emoji:"🧰",desc:"جعبه مناسب نگهداری ابزارهای دستی."},
+{id:3,name:"آچار فرانسه",price:380000,emoji:"🔧",desc:"آچار قابل تنظیم برای مصارف عمومی."},
+{id:4,name:"پیچ‌گوشتی",price:120000,emoji:"🪛",desc:"ابزار دستی برای باز و بسته کردن پیچ‌ها."},
+{id:5,name:"متر اندازه‌گیری",price:160000,emoji:"📏",desc:"متر کاربردی برای اندازه‌گیری."},
+{id:6,name:"چراغ کار",price:450000,emoji:"🔦",desc:"چراغ قابل حمل برای محیط کار."}
+];
+let cart=[];
+const money=n=>n.toLocaleString("fa-IR");
+function render(){
+const q=document.getElementById("search").value.trim().toLowerCase();
+document.getElementById("products").innerHTML=items.filter(p=>p.name.toLowerCase().includes(q)).map(p=>`
+<div class="card">
+<div class="pic">${p.emoji}</div>
+<h3>${p.name}</h3>
+<p class="price">${money(p.price)} تومان</p>
+<button onclick="showDetails(${p.id})">جزئیات</button>
+<button class="secondary" onclick="add(${p.id})">افزودن به سبد</button>
+</div>`).join("");
+}
+function showDetails(id){
+const p=items.find(x=>x.id===id);
+const box=document.getElementById("details");
+box.hidden=false;
+box.innerHTML=`<h2>${p.emoji} ${p.name}</h2><p>${p.desc}</p><p class="price">${money(p.price)} تومان</p><button onclick="add(${p.id})">افزودن به سبد</button>`;
+box.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function add(id){cart.push(items.find(p=>p.id===id));drawCart()}
+function drawCart(){
+document.getElementById("count").textContent=money(cart.length);
+document.getElementById("total").textContent=money(cart.reduce((s,p)=>s+p.price,0));
+document.getElementById("cart").innerHTML=cart.length?cart.map((p,i)=>`${p.name} - ${money(p.price)} تومان <button onclick="removeItem(${i})">حذف</button>`).join("<hr>"):"سبد خرید خالی است.";
+}
+function removeItem(i){cart.splice(i,1);drawCart()}
+function clearCart(){cart=[];drawCart()}
+render();
+</script>
+</body>
+</html>
